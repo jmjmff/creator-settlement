@@ -153,6 +153,14 @@ INSERT INTO sale_records (course_id, student_id, payment_amount, payment_at, can
     VALUES (2, 'student-22', 100000, '2025-07-24 16:00:00', false);  -- sale-22
 
 -- =====================================================================
+-- [케이스 9] 수수료율 15% 검증 (sale-23)
+-- creator-1, 2024-06, 100000원 1건
+-- 2024년 수수료율 이력: 15% → commission=15000, settlement=85000
+-- =====================================================================
+INSERT INTO sale_records (course_id, student_id, payment_amount, payment_at, cancelled)
+    VALUES (1, 'student-23', 100000, '2024-06-10 10:00:00', false);  -- sale-23
+
+-- =====================================================================
 -- CSV 다운로드 테스트용 정산 데이터 (settlements)
 -- PAID 2건 / CONFIRMED 2건 / PENDING 2건 → 상태별 필터링 및 전체 출력 확인용
 -- =====================================================================

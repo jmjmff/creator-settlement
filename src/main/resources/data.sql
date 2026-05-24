@@ -1,3 +1,13 @@
+-- =====================================================================
+-- 수수료율 이력 (commission_rate_histories)
+-- appliedTo = null → 현재까지 유효한 최신 수수료율
+-- 정산 생성 시 해당 월 1일 기준으로 적용 수수료율을 스냅샷으로 저장함
+-- =====================================================================
+INSERT INTO commission_rate_histories (rate, applied_from, applied_to)
+    VALUES (0.1500, '2024-01-01', '2024-12-31');  -- 2024년: 15%
+INSERT INTO commission_rate_histories (rate, applied_from, applied_to)
+    VALUES (0.2000, '2025-01-01', NULL);           -- 2025년~현재: 20% (기본값과 동일)
+
 -- 크리에이터
 INSERT INTO creators (name, email) VALUES ('김강사', 'kim@example.com');
 INSERT INTO creators (name, email) VALUES ('이강사', 'lee@example.com');
@@ -141,3 +151,21 @@ INSERT INTO sale_records (course_id, student_id, payment_amount, payment_at, can
     VALUES (2, 'student-21', 100000, '2025-07-17 14:00:00', false);  -- sale-21
 INSERT INTO sale_records (course_id, student_id, payment_amount, payment_at, cancelled)
     VALUES (2, 'student-22', 100000, '2025-07-24 16:00:00', false);  -- sale-22
+
+-- =====================================================================
+-- CSV 다운로드 테스트용 정산 데이터 (settlements)
+-- PAID 2건 / CONFIRMED 2건 / PENDING 2건 → 상태별 필터링 및 전체 출력 확인용
+-- =====================================================================
+INSERT INTO settlements (creator_id, year_month, commission_rate, total_sales_amount, total_refund_amount, net_sales_amount, commission, settlement_amount, sale_count, cancel_count, status, confirmed_at, paid_at)
+VALUES
+-- PAID (2건)
+(1, '2025-03', 0.20, 260000, 110000, 150000, 30000, 120000, 4, 2, 'PAID',      '2025-04-01 10:00:00', '2025-04-05 10:00:00'),
+(3, '2025-02', 0.20, 120000,      0, 120000, 24000,  96000, 1, 0, 'PAID',      '2025-03-01 10:00:00', '2025-03-05 10:00:00'),
+
+-- CONFIRMED (2건)
+(1, '2025-04', 0.20, 180000, 180000,      0,     0,      0, 3, 3, 'CONFIRMED', '2025-05-01 10:00:00', NULL),
+(2, '2025-01', 0.20,  60000,      0,  60000, 12000,  48000, 1, 0, 'CONFIRMED', '2025-02-01 10:00:00', NULL),
+
+-- PENDING (2건)
+(1, '2025-07', 0.20, 400000,      0, 400000, 80000, 320000, 4, 0, 'PENDING',   NULL, NULL),
+(3, '2025-07', 0.20,  33333,      0,  33333,  6667,  26666, 1, 0, 'PENDING',   NULL, NULL);

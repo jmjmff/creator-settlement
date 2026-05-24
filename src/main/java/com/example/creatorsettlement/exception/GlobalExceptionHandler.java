@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.format.DateTimeParseException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -35,6 +36,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidSettlementStatus(InvalidSettlementStatusException e) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)               // 422: 상태 전이 불가
                 .body(ErrorResponse.builder().status(422).message(e.getMessage()).build());
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<ErrorResponse> handleDateTimeParse(DateTimeParseException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)                        // 400: 날짜 형식 오류
+                .body(ErrorResponse.builder().status(400).message("날짜 형식이 올바르지 않습니다. 올바른 형식: yyyy-MM").build());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
